@@ -10,21 +10,21 @@ using namespace std;
 using ALGO_CONFIG_TYPE = typename SampleDetector::ALGO_CONFIG_TYPE;
 ALGO_CONFIG_TYPE algoConfig{ 0.6, 0.5, 0.5 };
 
-cv::Mat outputFrame{ 0 };        // ÓÃÓÚ´æ´¢Ëã·¨´¦ÀíºóµÄÊä³öÍ¼Ïñ£¬¸ù¾İji.hµÄ½Ó¿Ú¹æ·¶£¬½Ó¿ÚÊµÏÖĞèÒª¸ºÔğÊÍ·Å¸Ã×ÊÔ´
-//ÊµÏÖji_create_predictor¡¢ji_calc_frameºÍprocessMat¼´¿É
+cv::Mat outputFrame{ 0 };        // ç”¨äºå­˜å‚¨ç®—æ³•å¤„ç†åçš„è¾“å‡ºå›¾åƒï¼Œæ ¹æ®ji.hçš„æ¥å£è§„èŒƒï¼Œæ¥å£å®ç°éœ€è¦è´Ÿè´£é‡Šæ”¾è¯¥èµ„æº
+//å®ç°ji_create_predictorã€ji_calc_frameå’ŒprocessMatå³å¯
 
 
 int processMat(SampleDetector* detector, const cv::Mat& inFrame, const char* args, cv::Mat& outFrame, JI_EVENT& event) {
     std::vector<SampleDetector::Object> detectedObjects;
     std::vector<SampleDetector::Object> validTargets;
 
-    int processRet = detector->detect(inFrame, validTargets);  // Ëã·¨´¦Àí£¬¸Ä³É×Ô¼ºµÄ´¦Àíº¯ÊıÃû
+    int processRet = detector->detect(inFrame, validTargets);  // ç®—æ³•å¤„ç†ï¼Œæ”¹æˆè‡ªå·±çš„å¤„ç†å‡½æ•°å
     if (processRet != SampleDetector::PROCESS_OK) {
         return JISDK_RET_FAILED;
     }
     static const string kWinName = "Deep learning object detection in OpenCV";
-    namedWindow(kWinName, WINDOW_NORMAL); //Ö¸¶¨µ¯´°µÄÃû³Æ
-    imshow(kWinName, inFrame); //ÏÔÊ¾¼ì²â½á¹û
+    namedWindow(kWinName, WINDOW_NORMAL); //æŒ‡å®šå¼¹çª—çš„åç§°
+    imshow(kWinName, inFrame); //æ˜¾ç¤ºæ£€æµ‹ç»“æœ
     waitKey(0);
     destroyAllWindows();
     return JISDK_RET_SUCCEED;
@@ -32,14 +32,13 @@ int processMat(SampleDetector* detector, const cv::Mat& inFrame, const char* arg
 
 
 void* ji_create_predictor(int pdtype) {
-    //¸ÄÒ»ÏÂinit
     auto* detector = new SampleDetector(algoConfig.thresh, algoConfig.nms, algoConfig.hierThresh);
     int iRet = detector->init("../class.names", "../yolov5s.onnx");
     return detector;
 }
 
 int ji_calc_frame(void* predictor, const JI_CV_FRAME* inFrame, const char* args,
-    //²»ÓÃ¸Ä
+    //ä¸ç”¨æ”¹
     JI_CV_FRAME* outFrame, JI_EVENT* event) {
     if (predictor == NULL || inFrame == NULL) {
         return JISDK_RET_INVALIDPARAMS;
