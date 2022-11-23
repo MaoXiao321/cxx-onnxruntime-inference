@@ -7,8 +7,6 @@
 
 using namespace std;
 using namespace Ort;
-//¶¼ÊÇ×Ô¼ºµÄ¶«Î÷
-
 
 const float anchors_640[3][6] = { {10.0,  13.0, 16.0,  30.0,  33.0,  23.0},
 								 {30.0,  61.0, 62.0,  45.0,  59.0,  119.0},
@@ -27,7 +25,7 @@ SampleDetector::SampleDetector(double thresh, double nms, double hierThresh) :
 
 
 int endsWith(string s, string sub) {
-	//×Ö·û´®´ÓºóÍùÇ°ËÑË÷Ö¸¶¨ÄÚÈİ£¬·µ»ØË÷ÒıÖµ£¬Èç¹ûÃ»ÓĞ¾Í·µ»Ø-1¡£µ±Ë÷ÒıÖµµÈÓÚs.length() - sub.length()Ê±£¬ËµÃ÷ÒÔsub½áÎ²
+	//å­—ç¬¦ä¸²ä»åå¾€å‰æœç´¢æŒ‡å®šå†…å®¹ï¼Œè¿”å›ç´¢å¼•å€¼ï¼Œå¦‚æœæ²¡æœ‰å°±è¿”å›-1ã€‚å½“ç´¢å¼•å€¼ç­‰äºs.length() - sub.length()æ—¶ï¼Œè¯´æ˜ä»¥subç»“å°¾
 	return s.rfind(sub) == (s.length() - sub.length()) ? 1 : 0;
 }
 
@@ -36,7 +34,7 @@ int SampleDetector::init(string classesFile, string model_path) {
 	
 	//OrtStatus* status = OrtSessionOptionsAppendExecutionProvider_CUDA(sessionOptions, 0);
 	sessionOptions.SetGraphOptimizationLevel(ORT_ENABLE_BASIC);
-	ort_session = new Session(env, widestr.c_str(), sessionOptions); //ort_sessionÓÃÓÚÔ¤²â
+	ort_session = new Session(env, widestr.c_str(), sessionOptions); //ort_sessionç”¨äºé¢„æµ‹
 	size_t numInputNodes = ort_session->GetInputCount();
 	size_t numOutputNodes = ort_session->GetOutputCount();
 	AllocatorWithDefaultOptions allocator;
@@ -84,15 +82,15 @@ void SampleDetector::unInit() {
 
 Mat SampleDetector::resize_image(Mat srcimg, int* newh, int* neww, int* top, int* left)
 {
-	//Ö¸ÕëÊÇÒ»¸ö±äÁ¿£¬ÓÃÀ´´æµØÖ·¡£Ö¸ÕëÇ°ÔÙ¼Ó¸ö*ÊÇ½âÒıÓÃ£¬ÄÃ³öÕâ¸öµØÖ·´æµÄÖµ
+	//æŒ‡é’ˆæ˜¯ä¸€ä¸ªå˜é‡ï¼Œç”¨æ¥å­˜åœ°å€ã€‚æŒ‡é’ˆå‰å†åŠ ä¸ª*æ˜¯è§£å¼•ç”¨ï¼Œæ‹¿å‡ºè¿™ä¸ªåœ°å€å­˜çš„å€¼
 	int srch = srcimg.rows, srcw = srcimg.cols;
-	*newh = inpHeight; //newhÊÇÖ¸Õë£¬Ö¸ÕëÇ°¼Ó*ÄÃ³ö¸ÃÎ»ÖÃµÄÖµ£¬ÕâÀïÊÇ½«¸ÃÎ»ÖÃµÄÖµ¸³ÎªinpHeight
+	*newh = inpHeight; //newhæ˜¯æŒ‡é’ˆï¼ŒæŒ‡é’ˆå‰åŠ *æ‹¿å‡ºè¯¥ä½ç½®çš„å€¼ï¼Œè¿™é‡Œæ˜¯å°†è¯¥ä½ç½®çš„å€¼èµ‹ä¸ºinpHeight
 	*neww = inpWidth;
 
 	Mat dstimg;
 	if (keep_ratio && srch != srcw) {
-		float hw_scale = (float)srch / srcw; //¸ß¿í±È
-		//µ÷ÕûÍ¼Æ¬´óĞ¡
+		float hw_scale = (float)srch / srcw; //é«˜å®½æ¯”
+		//è°ƒæ•´å›¾ç‰‡å¤§å°
 		if (hw_scale > 1) {
 			*newh = inpHeight;
 			*neww = int(inpWidth / hw_scale);
@@ -182,14 +180,14 @@ int SampleDetector::detect(const Mat& frame, vector<Object>& result)
 	auto allocator_info = MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
 	Value input_tensor_ = Value::CreateTensor<float>(allocator_info, input_image_.data(), input_image_.size(), input_shape_.data(), input_shape_.size());
 
-	// ¿ªÊ¼ÍÆÀí
-	vector<Value> ort_outputs = ort_session->Run(RunOptions{ nullptr }, &input_names[0], &input_tensor_, 1, output_names.data(), output_names.size());   // ¿ªÊ¼ÍÆÀí
+	// å¼€å§‹æ¨ç†
+	vector<Value> ort_outputs = ort_session->Run(RunOptions{ nullptr }, &input_names[0], &input_tensor_, 1, output_names.data(), output_names.size());   // å¼€å§‹æ¨ç†
 	/////generate proposals
 	vector<BoxInfo> generate_boxes;
 	float ratioh = (float)frame.rows / newh, ratiow = (float)frame.cols / neww;
 	int n = 0, q = 0, i = 0, j = 0, row_ind = 0, k = 0; ///xmin,ymin,xamx,ymax,box_score, class_score
 	const float* pdata = ort_outputs[0].GetTensorMutableData<float>();
-	for (n = 0; n < this->num_stride; n++)   ///ÌØÕ÷Í¼³ß¶È
+	for (n = 0; n < this->num_stride; n++)   ///ç‰¹å¾å›¾å°ºåº¦
 	{
 		const float stride = pow(2, n + 3);
 		int num_grid_x = (int)ceil((this->inpWidth / stride));
