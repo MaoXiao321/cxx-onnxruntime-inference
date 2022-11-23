@@ -1,5 +1,5 @@
 ## yolov5
-C++推理yolov5.onnx，pt文件转onnx可以采用https://github.com/ultralytics/yolov5中的export.py。
+C++推理yolov5.onnx，pt文件转onnx采用https://github.com/ultralytics/yolov5 中的export.py。具体使用写在：https://github.com/MaoXiao321/pytorch-yolov5
 
 
 ## 代码结构
