@@ -1,3 +1,7 @@
+## yolov5
+C++推理yolov5.onnx，pt文件转onnx可以采用https://github.com/ultralytics/yolov5中的export.py。
+
+
 ## 代码结构
 
 test.cpp中main函数为主入口：
