@@ -8,9 +8,6 @@ using namespace cv;
 using namespace std;
 using namespace Ort;
 
-
-//¶¼ÊÇ×Ô¼ºµÄ¶«Î÷£¬¶ÔÕÕ×ÅcppĞ´
-
 class SampleDetector {
 
 public:
@@ -20,7 +17,7 @@ public:
         cv::Rect rect;
     } Object;
     typedef struct {
-        // Ëã·¨ÅäÖÃ¿ÉÑ¡µÄÅäÖÃ²ÎÊı
+        // ç®—æ³•é…ç½®å¯é€‰çš„é…ç½®å‚æ•°
         double nms;
         double thresh;
         double hierThresh;
@@ -58,7 +55,7 @@ private:
     float* anchors;
 
     double mThresh;
-    double mHIERThresh; //ÖÃĞÅ¶È*Àà±ğµÃ·Ö
+    double mHIERThresh; //ç½®ä¿¡åº¦*ç±»åˆ«å¾—åˆ†
     double mNms;
     const bool keep_ratio = true;
     vector<float> input_image_;
