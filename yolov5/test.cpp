@@ -5,12 +5,9 @@
 #include "ji.h"
 using namespace std;
 
-// 没有要改的
-
 void* predictor = NULL;
 string strIn = "../bus.jpg";
 
-//test.cpp不需要修改
 int main(int argc, char* argv[]) {
     predictor = ji_create_predictor(JISDK_PREDICTOR_DEFAULT);
     if (predictor == NULL)
